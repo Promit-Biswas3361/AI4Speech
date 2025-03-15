@@ -1,0 +1,162 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/background_gradient">
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="#BC000000"
+        android:alpha="0.06"/>
+
+    <!-- Navbar -->
+    <LinearLayout
+        android:id="@+id/navbar"
+        android:layout_width="match_parent"
+        android:layout_height="80dp"
+        android:orientation="horizontal"
+        android:background="@color/transparent_white"
+        android:gravity="center_vertical"
+        android:paddingHorizontal="16dp"
+        android:elevation="30dp">
+
+        <ImageView
+            android:id="@+id/appLogo"
+            android:layout_width="106dp"
+            android:layout_height="80dp"
+            android:contentDescription="App Logo"
+            android:src="@drawable/app_logo" />
+
+        <View
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"/>
+
+        <ImageButton
+            android:id="@+id/profileButton"
+            android:layout_width="25dp"
+            android:layout_height="25dp"
+            android:layout_marginEnd="10dp"
+            android:adjustViewBounds="true"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:contentDescription="Profile"
+            android:scaleType="fitCenter"
+            android:src="@drawable/profile" />
+
+        <ImageButton
+            android:id="@+id/logoutButton"
+            android:layout_width="25dp"
+            android:layout_height="25dp"
+            android:src="@drawable/logout"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:contentDescription="Logout"
+            android:scaleType="fitCenter"
+            android:adjustViewBounds="true"/>
+    </LinearLayout>
+
+    <!-- Level Indicator -->
+    <TextView
+        android:id="@+id/levelIndicator"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Level 1"
+        android:textSize="22sp"
+        android:textStyle="bold"
+        android:textColor="@android:color/white"
+        android:layout_below="@id/navbar"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="20dp"/>
+
+    <!-- Object Image -->
+    <ImageView
+        android:id="@+id/objectImage"
+        android:layout_width="185dp"
+        android:layout_height="185dp"
+        android:scaleType="fitCenter"
+        android:layout_below="@id/levelIndicator"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="15dp"/>
+
+    <!-- Letter Boxes -->
+    <LinearLayout
+        android:id="@+id/letterBoxesContainer"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/objectImage"
+        android:layout_centerHorizontal="true"
+        android:orientation="horizontal"
+        android:paddingTop="10dp"
+        android:layout_marginTop="15dp"/>
+
+    <!-- Keyboard with Scroll -->
+    <ScrollView
+        android:id="@+id/alphabetKeyboardScroll"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/letterBoxesContainer"
+        android:layout_marginTop="20dp"
+        android:fillViewport="true"
+        android:scrollbars="vertical"
+        android:gravity="center_horizontal">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:orientation="vertical">
+
+            <GridLayout
+                android:id="@+id/alphabetKeyboard"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:columnCount="6"
+                android:padding="1dp"
+                android:alignmentMode="alignMargins"
+                android:layout_gravity="center"/>
+        </LinearLayout>
+    </ScrollView>
+
+
+    <!-- Feedback and Buttons in Horizontal Layout -->
+    <LinearLayout
+        android:id="@+id/feedbackSection"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/alphabetKeyboardScroll"
+        android:layout_centerHorizontal="true"
+        android:orientation="horizontal"
+        android:gravity="center"
+        android:visibility="visible"> <!-- Visible initially for Submit Button -->
+
+        <!-- Submit Button -->
+        <Button
+            android:id="@+id/submitButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Submit"
+            android:padding="10dp"
+            android:textSize="16sp"
+            android:visibility="gone"/>
+
+        <!-- Feedback Icon (Initially Hidden) -->
+        <ImageView
+            android:id="@+id/feedbackIcon"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:layout_marginStart="10dp"
+            android:visibility="gone"/>
+
+        <!-- Next Button (Initially Hidden) -->
+        <Button
+            android:id="@+id/nextButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Next"
+            android:padding="12dp"
+            android:textSize="16sp"
+            android:layout_marginStart="10dp"
+            android:visibility="gone"/>
+    </LinearLayout>
+
+</RelativeLayout>

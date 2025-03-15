@@ -1,0 +1,142 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/background_gradient">
+
+    <!-- Semi-transparent overlay -->
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="#BC000000"
+        android:alpha="0.06"/>
+
+    <!-- Navbar (Fixed at the Top) -->
+    <LinearLayout
+        android:id="@+id/navbar"
+        android:layout_width="match_parent"
+        android:layout_height="80dp"
+        android:orientation="horizontal"
+        android:background="@color/transparent_white"
+        android:gravity="center_vertical"
+        android:paddingHorizontal="16dp"
+        android:elevation="30dp">
+
+        <ImageView
+            android:id="@+id/appLogo"
+            android:layout_width="106dp"
+            android:layout_height="80dp"
+            android:contentDescription="App Logo"
+            android:src="@drawable/app_logo" />
+
+        <View
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"/>
+
+        <ImageButton
+            android:id="@+id/profileButton"
+            android:layout_width="25dp"
+            android:layout_height="25dp"
+            android:layout_marginEnd="10dp"
+            android:adjustViewBounds="true"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:contentDescription="Profile"
+            android:scaleType="fitCenter"
+            android:src="@drawable/profile" />
+
+        <ImageButton
+            android:id="@+id/logoutButton"
+            android:layout_width="25dp"
+            android:layout_height="25dp"
+            android:src="@drawable/logout"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:contentDescription="Logout"
+            android:scaleType="fitCenter"
+            android:adjustViewBounds="true"/>
+    </LinearLayout>
+
+    <!-- Content Section -->
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="543dp"
+        android:layout_centerInParent="true"
+        android:fillViewport="true"
+        android:layout_marginTop="20dp"
+        android:gravity="center"
+        android:padding="20dp">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/appDescription"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:padding="10dp"
+                android:text="AI4Speech is an innovative speech therapy app that helps users improve speech clarity through interactive tests and engaging games."
+                android:textColor="@android:color/white"
+                android:textSize="18sp" />
+
+            <TextView
+                android:id="@+id/featuresTitle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:paddingTop="10dp"
+                android:text="Salient Features:"
+                android:textColor="@android:color/white"
+                android:textSize="20sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/featuresList"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:padding="10dp"
+                android:text="✔️ Speech Accuracy Test\n✔️ Stuttering Analysis\n✔️ Fun Object Identification Game\n✔️ Interactive Learning Experience"
+                android:textColor="@android:color/white"
+                android:textSize="16sp" />
+        </LinearLayout>
+    </ScrollView>
+
+    <!-- Navigation Buttons -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:orientation="horizontal"
+        android:gravity="center"
+        android:padding="10dp">
+
+        <Button
+            android:id="@+id/speechTestButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Speech Test"
+            android:backgroundTint="@color/c1"
+            android:textColor="@android:color/white"
+            android:padding="12dp"
+            android:textSize="16sp"
+            android:layout_margin="8dp" />
+
+        <Button
+            android:id="@+id/gameButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Play Game"
+            android:backgroundTint="@color/c2"
+            android:textColor="@android:color/white"
+            android:padding="12dp"
+            android:layout_marginEnd="10dp"
+            android:textSize="16sp"
+            android:layout_margin="8dp" />
+
+
+    </LinearLayout>
+
+</RelativeLayout>
