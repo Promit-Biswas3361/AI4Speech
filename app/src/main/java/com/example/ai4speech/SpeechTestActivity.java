@@ -20,8 +20,17 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.FirebaseFirestore;
+
 import java.io.File;
 import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Locale;
+import java.util.Map;
 
 public class SpeechTestActivity extends AppCompatActivity {
 
@@ -35,6 +44,8 @@ public class SpeechTestActivity extends AppCompatActivity {
     private boolean isRecording = false;
     private boolean isRecorded = false;
     private static final int REQUEST_MIC_PERMISSION = 200;
+    private FirebaseFirestore db;
+    private String userId;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,6 +62,16 @@ public class SpeechTestActivity extends AppCompatActivity {
         profileButton = findViewById(R.id.profileButton);
         logoutButton = findViewById(R.id.logoutButton);
 
+        db = FirebaseFirestore.getInstance();
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+
+        if (user != null) {
+            userId = user.getUid();
+        } else {
+            Toast.makeText(this, "User not logged in!", Toast.LENGTH_SHORT).show();
+            finish();
+        }
+
         submitButton.setEnabled(false);
         playButton.setVisibility(View.GONE);
 
@@ -61,26 +82,17 @@ public class SpeechTestActivity extends AppCompatActivity {
         playButton.setOnClickListener(view -> playRecordedAudio());
         submitButton.setOnClickListener(view -> submitRecording());
 
-        profileButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                startActivity(new Intent(SpeechTestActivity.this, ProfileActivity.class));
-            }
-        });
+        profileButton.setOnClickListener(v -> startActivity(new Intent(SpeechTestActivity.this, ProfileActivity.class)));
 
-        // Logout and go back to Login Page
-        logoutButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                SharedPreferences preferences = getSharedPreferences("UserPrefs", MODE_PRIVATE);
-                SharedPreferences.Editor editor = preferences.edit();
-                editor.putBoolean("isLoggedIn", false);
-                editor.apply();
+        logoutButton.setOnClickListener(v -> {
+            SharedPreferences preferences = getSharedPreferences("UserPrefs", MODE_PRIVATE);
+            SharedPreferences.Editor editor = preferences.edit();
+            editor.putBoolean("isLoggedIn", false);
+            editor.apply();
 
-                Toast.makeText(SpeechTestActivity.this, "Logged out!", Toast.LENGTH_SHORT).show();
-                startActivity(new Intent(SpeechTestActivity.this, MainActivity.class));
-                finish();
-            }
+            Toast.makeText(SpeechTestActivity.this, "Logged out!", Toast.LENGTH_SHORT).show();
+            startActivity(new Intent(SpeechTestActivity.this, MainActivity.class));
+            finish();
         });
     }
 
@@ -108,20 +120,14 @@ public class SpeechTestActivity extends AppCompatActivity {
             return;
         }
 
-        // Set correct file path
         File audioFile = new File(getExternalCacheDir(), "speech_test.3gp");
         audioFilePath = audioFile.getAbsolutePath();
 
-        if (mediaRecorder != null) {
-            mediaRecorder.release();
-            mediaRecorder = null;
-        }
-
         mediaRecorder = new MediaRecorder();
         mediaRecorder.setAudioSource(MediaRecorder.AudioSource.MIC);
-        mediaRecorder.setOutputFormat(MediaRecorder.OutputFormat.MPEG_4);  // Better format
+        mediaRecorder.setOutputFormat(MediaRecorder.OutputFormat.MPEG_4);
         mediaRecorder.setOutputFile(audioFilePath);
-        mediaRecorder.setAudioEncoder(MediaRecorder.AudioEncoder.AAC);  // High-quality encoder
+        mediaRecorder.setAudioEncoder(MediaRecorder.AudioEncoder.AAC);
 
         try {
             mediaRecorder.prepare();
@@ -136,19 +142,15 @@ public class SpeechTestActivity extends AppCompatActivity {
 
     private void stopRecording() {
         if (mediaRecorder != null) {
-            try {
-                mediaRecorder.stop();
-                mediaRecorder.release();
-                mediaRecorder = null;
-                isRecording = false;
-                isRecorded = true;
-                micButton.setImageResource(R.drawable.mic);
-                playButton.setVisibility(View.VISIBLE);
-                submitButton.setEnabled(true);
-                Toast.makeText(this, "Recording saved!", Toast.LENGTH_SHORT).show();
-            } catch (Exception e) {
-                Toast.makeText(this, "Error stopping recording: " + e.getMessage(), Toast.LENGTH_SHORT).show();
-            }
+            mediaRecorder.stop();
+            mediaRecorder.release();
+            mediaRecorder = null;
+            isRecording = false;
+            isRecorded = true;
+            micButton.setImageResource(R.drawable.mic);
+            playButton.setVisibility(View.VISIBLE);
+            submitButton.setEnabled(true);
+            Toast.makeText(this, "Recording saved!", Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -158,24 +160,12 @@ public class SpeechTestActivity extends AppCompatActivity {
             return;
         }
 
-        File audioFile = new File(audioFilePath);
-        if (!audioFile.exists()) {
-            Toast.makeText(this, "Audio file not found!", Toast.LENGTH_SHORT).show();
-            return;
-        }
-
-        if (mediaPlayer != null) {
-            mediaPlayer.release();
-            mediaPlayer = null;
-        }
-
         mediaPlayer = new MediaPlayer();
         try {
             mediaPlayer.setDataSource(audioFilePath);
             mediaPlayer.prepare();
             mediaPlayer.start();
             playButton.setImageResource(R.drawable.pause);
-            Toast.makeText(this, "Playing recorded audio...", Toast.LENGTH_SHORT).show();
 
             mediaPlayer.setOnCompletionListener(mp -> playButton.setImageResource(R.drawable.play));
         } catch (IOException e) {
@@ -194,35 +184,37 @@ public class SpeechTestActivity extends AppCompatActivity {
 
         new Handler().postDelayed(() -> {
             loadingIcon.setVisibility(View.GONE);
+
             double accuracy = Math.random() * 20 + 80;
-            accuracyText.setText("Accuracy: " + String.format("%.2f", accuracy) + "%");
+            String accuracyScore = String.format("%.2f", accuracy) + "%";
+            accuracyText.setText("Accuracy: " + accuracyScore);
             accuracyText.setVisibility(View.VISIBLE);
-            Toast.makeText(this, "Analysis complete!", Toast.LENGTH_SHORT).show();
+
+            saveSpeechTestResult(generatedText.getText().toString(), accuracy);
         }, 4000);
     }
 
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        if (mediaPlayer != null) {
-            mediaPlayer.release();
-            mediaPlayer = null;
-        }
-        if (mediaRecorder != null) {
-            mediaRecorder.release();
-            mediaRecorder = null;
-        }
+    private void saveSpeechTestResult(String text, double accuracy) {
+        if (userId == null) return;
+
+        String testId = "test_" + System.currentTimeMillis();
+        Map<String, Object> testResult = new HashMap<>();
+        testResult.put("text", text);
+        testResult.put("accuracy", accuracy);
+        testResult.put("timestamp", System.currentTimeMillis());
+        testResult.put("formattedDate", getCurrentDate());
+
+        db.collection("users")
+                .document(userId)
+                .collection("speech_tests")
+                .document(testId)
+                .set(testResult)
+                .addOnSuccessListener(aVoid -> Toast.makeText(SpeechTestActivity.this, "Test result saved!", Toast.LENGTH_SHORT).show())
+                .addOnFailureListener(e -> Toast.makeText(SpeechTestActivity.this, "Failed to save test: " + e.getMessage(), Toast.LENGTH_SHORT).show());
     }
 
-    @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        if (requestCode == REQUEST_MIC_PERMISSION) {
-            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                Toast.makeText(this, "Microphone permission granted", Toast.LENGTH_SHORT).show();
-            } else {
-                Toast.makeText(this, "Microphone permission denied", Toast.LENGTH_SHORT).show();
-            }
-        }
+    private String getCurrentDate() {
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault());
+        return sdf.format(new Date());
     }
 }

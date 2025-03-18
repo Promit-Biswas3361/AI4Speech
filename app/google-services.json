@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "861451868056",
+    "project_id": "ai4speech-6b7c4",
+    "storage_bucket": "ai4speech-6b7c4.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:861451868056:android:6521a8fd7315718e48bded",
+        "android_client_info": {
+          "package_name": "com.example.ai4speech"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAWDNHRVIvn_58er9fRsaA2NsdVAA9as-M"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
