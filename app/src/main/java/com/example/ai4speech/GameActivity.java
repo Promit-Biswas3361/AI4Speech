@@ -58,8 +58,11 @@ public class GameActivity extends AppCompatActivity {
 
         // Handle logout button click
         logoutButton.setOnClickListener(v -> {
-            Intent intent = new Intent(GameActivity.this, LoginActivity.class);
-            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+            FirebaseAuth.getInstance().signOut();
+            Toast.makeText(GameActivity.this, "Logged out!", Toast.LENGTH_SHORT).show();
+
+            Intent intent = new Intent(GameActivity.this, MainActivity.class);
+            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK); // Clear back stack
             startActivity(intent);
             finish();
         });
@@ -92,7 +95,7 @@ public class GameActivity extends AppCompatActivity {
             if (documentSnapshot.exists()) {
                 Long savedLevel = documentSnapshot.getLong("current_level");
                 if (savedLevel != null) {
-                    currentLevel = savedLevel.intValue() + 1; // Load saved level
+                    currentLevel = savedLevel.intValue() ; // Load saved level
                 } else {
                     currentLevel = 1; // Start from level 1 if no data found
                 }
@@ -238,7 +241,6 @@ public class GameActivity extends AppCompatActivity {
     }
 
     public void onNext() {
-        currentLevel++;
         if (currentLevel > TOTAL_LEVELS) {
             Toast.makeText(this, "Game Completed! Well Done!", Toast.LENGTH_LONG).show();
             finish();
@@ -293,6 +295,9 @@ public class GameActivity extends AppCompatActivity {
         }).addOnFailureListener(e -> {
             Toast.makeText(this, "Failed to save: " + e.getMessage(), Toast.LENGTH_SHORT).show();
         });
+
+        if(isCorrect)
+            currentLevel++;
     }
 
 }

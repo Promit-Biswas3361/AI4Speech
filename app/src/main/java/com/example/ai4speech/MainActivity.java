@@ -7,10 +7,24 @@ import android.view.View;
 import android.widget.Button;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.FirebaseFirestore;
+
 public class MainActivity extends AppCompatActivity {
+
+    private FirebaseAuth mAuth;
+    private FirebaseFirestore db;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        mAuth = FirebaseAuth.getInstance();
+        db = FirebaseFirestore.getInstance();
+
+        if(checkUserSession()){
+            return;
+        }
 
         SharedPreferences preferences = getSharedPreferences("UserPrefs", MODE_PRIVATE);
         boolean isLoggedIn = preferences.getBoolean("isLoggedIn", false);
@@ -40,5 +54,21 @@ public class MainActivity extends AppCompatActivity {
                 startActivity(intent);
             }
         });
+    }
+
+    private boolean checkUserSession() {
+        FirebaseUser currentUser = mAuth.getCurrentUser();
+        if (currentUser != null) {
+            // User is already logged in, go to Landing Page
+            goToLandingPage();
+            return true;
+        }
+        return false;
+    }
+
+    private void goToLandingPage() {
+        Intent intent = new Intent(MainActivity.this, LandingPageActivity.class);
+        startActivity(intent);
+        finish(); // Prevent returning to login after navigating to Landing Page
     }
 }

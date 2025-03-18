@@ -10,6 +10,8 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.firebase.auth.FirebaseAuth;
+
 public class LandingPageActivity extends AppCompatActivity {
 
     private ImageButton profileButton, logoutButton;
@@ -34,18 +36,14 @@ public class LandingPageActivity extends AppCompatActivity {
         });
 
         // Logout and go back to Login Page
-        logoutButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                SharedPreferences preferences = getSharedPreferences("UserPrefs", MODE_PRIVATE);
-                SharedPreferences.Editor editor = preferences.edit();
-                editor.putBoolean("isLoggedIn", false);
-                editor.apply();
+        logoutButton.setOnClickListener(v -> {
+            FirebaseAuth.getInstance().signOut();
+            Toast.makeText(LandingPageActivity.this, "Logged out!", Toast.LENGTH_SHORT).show();
 
-                Toast.makeText(LandingPageActivity.this, "Logged out!", Toast.LENGTH_SHORT).show();
-                startActivity(new Intent(LandingPageActivity.this, MainActivity.class));
-                finish();
-            }
+            Intent intent = new Intent(LandingPageActivity.this, MainActivity.class);
+            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK); // Clear back stack
+            startActivity(intent);
+            finish();
         });
 
         // Navigate to Game Feature

@@ -85,13 +85,12 @@ public class SpeechTestActivity extends AppCompatActivity {
         profileButton.setOnClickListener(v -> startActivity(new Intent(SpeechTestActivity.this, ProfileActivity.class)));
 
         logoutButton.setOnClickListener(v -> {
-            SharedPreferences preferences = getSharedPreferences("UserPrefs", MODE_PRIVATE);
-            SharedPreferences.Editor editor = preferences.edit();
-            editor.putBoolean("isLoggedIn", false);
-            editor.apply();
-
+            FirebaseAuth.getInstance().signOut();
             Toast.makeText(SpeechTestActivity.this, "Logged out!", Toast.LENGTH_SHORT).show();
-            startActivity(new Intent(SpeechTestActivity.this, MainActivity.class));
+
+            Intent intent = new Intent(SpeechTestActivity.this, MainActivity.class);
+            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK); // Clear back stack
+            startActivity(intent);
             finish();
         });
     }
