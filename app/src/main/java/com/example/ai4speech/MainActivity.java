@@ -25,16 +25,17 @@ public class MainActivity extends AppCompatActivity {
         if(checkUserSession()){
             return;
         }
+        setContentView(R.layout.activity_main);
 
-        SharedPreferences preferences = getSharedPreferences("UserPrefs", MODE_PRIVATE);
-        boolean isLoggedIn = preferences.getBoolean("isLoggedIn", false);
-
-        if (isLoggedIn) {
-            startActivity(new Intent(this, LandingPageActivity.class));
-            finish();
-        } else {
-            setContentView(R.layout.activity_main);
-        }
+//        SharedPreferences preferences = getSharedPreferences("UserPrefs", MODE_PRIVATE);
+//        boolean isLoggedIn = preferences.getBoolean("isLoggedIn", false);
+//
+//        if (isLoggedIn) {
+//            startActivity(new Intent(this, LandingPageActivity.class));
+//            finish();
+//        } else {
+//            setContentView(R.layout.activity_main);
+//        }
 
         Button getStartedButton = findViewById(R.id.getStartedButton);
         Button loginButton = findViewById(R.id.loginButton);

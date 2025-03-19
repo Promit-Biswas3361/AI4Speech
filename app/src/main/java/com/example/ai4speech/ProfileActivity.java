@@ -144,7 +144,7 @@ public class ProfileActivity extends AppCompatActivity {
                 }
 
                 // Set game levels and accuracy
-                gameLevelsCompleted.setText("• Levels Completed: " + (levelsCompleted != null ? levelsCompleted : 0));
+                gameLevelsCompleted.setText("• Levels Completed: " + (levelsCompleted != null ? levelsCompleted-1. : 0));
 
                 if (totalAttempts > 0) {
                     double accuracy =(correctAttempts * 100.0) / totalAttempts;
