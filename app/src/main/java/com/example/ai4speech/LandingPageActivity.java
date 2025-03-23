@@ -62,4 +62,9 @@ public class LandingPageActivity extends AppCompatActivity {
             }
         });
     }
+
+    public void openTherapistsPage(View view) {
+        Intent intent = new Intent(LandingPageActivity.this, MapActivity.class);
+        startActivity(intent);
+    }
 }
