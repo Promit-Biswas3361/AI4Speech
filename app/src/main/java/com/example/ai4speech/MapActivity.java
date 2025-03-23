@@ -2,6 +2,7 @@ package com.example.ai4speech;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.location.LocationListener;
@@ -9,15 +10,19 @@ import android.location.LocationManager;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
+import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
+
+import com.google.firebase.auth.FirebaseAuth;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -26,11 +31,13 @@ import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.Map;
 
 public class MapActivity extends AppCompatActivity {
 
     private static final int LOCATION_PERMISSION_REQUEST_CODE = 1;
     private WebView webView;
+    private ImageButton profileButton, logoutButton;
     private double userLat, userLon;
     private LocationManager locationManager;
     private StringBuilder mapData;
@@ -41,6 +48,8 @@ public class MapActivity extends AppCompatActivity {
         setContentView(R.layout.activity_map);
 
         webView = findViewById(R.id.webView);
+        profileButton = findViewById(R.id.profileButton);
+        logoutButton = findViewById(R.id.logoutButton);
         setupWebView();
 
         // Request Location Permission and Get User's Location
@@ -53,6 +62,24 @@ public class MapActivity extends AppCompatActivity {
         } else {
             getUserLocation();
         }
+
+        profileButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(MapActivity.this, ProfileActivity.class));
+            }
+        });
+
+        // Logout and go back to Login Page
+        logoutButton.setOnClickListener(v -> {
+            FirebaseAuth.getInstance().signOut();
+            Toast.makeText(MapActivity.this, "Logged out!", Toast.LENGTH_SHORT).show();
+
+            Intent intent = new Intent(MapActivity.this, MainActivity.class);
+            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK); // Clear back stack
+            startActivity(intent);
+            finish();
+        });
     }
 
     // WebView Setup
@@ -102,19 +129,21 @@ public class MapActivity extends AppCompatActivity {
 
 
 //     Generate OSM API URL with Dynamic Coordinates
-    private String getOSMUrl(double lat, double lon) {
-        return "https://overpass-api.de/api/interpreter?data=[out:json];" +
-                "node(around:8000," + lat + "," + lon + ")" +
-                "[\"speciality\"~\"speech|speech therapy|therapy|speech language|communication disorder\", i];out;";
-    }
-
 //    private String getOSMUrl(double lat, double lon) {
 //        return "https://overpass-api.de/api/interpreter?data=[out:json];" +
-//                "node(around:10000," + lat + "," + lon + ")" +
-//                "[\"aeroway\"=\"aerodrome\"];out;";
+//                "node(around:8000," + lat + "," + lon + ")" +
+//                "[\"speciality\"~\"speech|speech therapy|therapy|speech language|communication disorder\", i];out;";
 //    }
 
-
+    private String getOSMUrl(double lat, double lon) {
+        return "https://overpass-api.de/api/interpreter?data=[out:json];" +
+                "(" +
+                "node(around:8000," + lat + "," + lon + ")[\"healthcare\"=\"speech_therapy\"];" +  // Direct speech therapy clinics
+                "node(around:8000," + lat + "," + lon + ")[\"amenity\"=\"clinic\"][\"speciality\"~\"speech|therapy|language|communication\", i];" +  // Clinics with related specialities
+                "node(around:8000," + lat + "," + lon + ")[\"office\"=\"therapist\"][\"speciality\"~\"speech|therapy\", i];" +  // Therapist offices
+                ");" +
+                "out;";
+    }
 
     // Async Task to Fetch OSM Data
     private class FetchOSMData extends AsyncTask<Void, Void, String> {
@@ -184,7 +213,7 @@ public class MapActivity extends AppCompatActivity {
                 "    <meta charset=\"utf-8\" />\n" +
                 "    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">\n" +
                 "    <link rel=\"stylesheet\" href=\"https://unpkg.com/leaflet@1.7.1/dist/leaflet.css\" />\n" +
-                "    <style>#map { height: 100vh; }</style>\n" +
+                "    <style>#map { height: 100vh; width: 100vw; }</style>\n" +
                 "</head>\n" +
                 "<body>\n" +
                 "    <div id=\"map\"></div>\n" +
