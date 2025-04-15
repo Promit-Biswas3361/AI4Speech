@@ -3,6 +3,7 @@ package com.example.ai4speech;
 import android.Manifest;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.media.MediaMetadataRetriever;
 import android.media.MediaPlayer;
 import android.media.MediaRecorder;
 import android.os.Bundle;
@@ -19,6 +20,7 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
 import com.example.ai4speech.HuggingFaceApiClient;
+import com.example.ai4speech.utils.SpeechMetricsUtils;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -41,11 +43,15 @@ import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
+import com.arthenica.ffmpegkit.FFmpegKit;
+
+import org.json.JSONObject;
+
 
 public class SpeechTestActivity extends AppCompatActivity {
 
     private static final String TAG = "SpeechTestActivity";
-    private TextView generatedText, accuracyText, fluencyText, pronunciationText;
+    private TextView generatedText, accuracyText, fluencyText, pronunciationText, responseText;
     private ImageButton regenerateButton, micButton, playButton, profileButton, logoutButton;
     private Button submitButton;
     private ProgressBar loadingIcon;
@@ -64,6 +70,19 @@ public class SpeechTestActivity extends AppCompatActivity {
     private static final String DATASET_URL = "https://huggingface.co/datasets/mispeech/speechocean762";
     private static final String API_ENDPOINT = "models/speechbrain/asr-wav2vec2-commonvoice-en";
 
+    private void convertToMp3(String inputPath, String outputPath) {
+        String command = "-y -i " + inputPath + " -codec:a libmp3lame -qscale:a 2 " + outputPath;
+
+        FFmpegKit.executeAsync(command, session -> {
+            int returnCode = session.getReturnCode().getValue();
+            if (returnCode == 0) {
+                runOnUiThread(() -> Toast.makeText(this, "Converted to MP3!", Toast.LENGTH_SHORT).show());
+            } else {
+                runOnUiThread(() -> Toast.makeText(this, "Conversion failed!", Toast.LENGTH_SHORT).show());
+            }
+        });
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -80,6 +99,7 @@ public class SpeechTestActivity extends AppCompatActivity {
         loadingIcon = findViewById(R.id.loadingIcon);
         profileButton = findViewById(R.id.profileButton);
         logoutButton = findViewById(R.id.logoutButton);
+        responseText = findViewById(R.id.responseText);
 
         db = FirebaseFirestore.getInstance();
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
@@ -220,12 +240,19 @@ public class SpeechTestActivity extends AppCompatActivity {
                 playButton.setVisibility(View.VISIBLE);
                 submitButton.setEnabled(true);
                 Toast.makeText(this, "Recording saved!", Toast.LENGTH_SHORT).show();
+
+                // Convert to MP3
+                String mp3Path = getExternalCacheDir().getAbsolutePath() + "/speech_test.mp3";
+                convertToMp3(audioFilePath, mp3Path);
+                audioFilePath = mp3Path; // Set path to new MP3 for playback/upload
+
             } catch (Exception e) {
                 Log.e(TAG, "Error stopping recording", e);
                 Toast.makeText(this, "Error stopping recording: " + e.getMessage(), Toast.LENGTH_SHORT).show();
             }
         }
     }
+
 
     private void playRecordedAudio() {
         if (!isRecorded || audioFilePath == null) {
@@ -285,8 +312,39 @@ public class SpeechTestActivity extends AppCompatActivity {
                         if (response.isSuccessful() && response.body() != null) {
                             try {
                                 String responseBody = response.body().string();
-                                // Log or display the actual API response
                                 Log.d(TAG, "API response: " + responseBody);
+
+// Extract text from JSON
+                                JSONObject jsonObject = new JSONObject(responseBody);
+                                String transcript = jsonObject.getString("text");
+
+                                String referenceText = currentSample.getText();
+
+// Duration estimate
+                                MediaMetadataRetriever mmr = new MediaMetadataRetriever();
+                                mmr.setDataSource(audioFilePath);
+                                String durationStr = mmr.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DURATION);
+                                double durationMillis = Double.parseDouble(durationStr);
+                                double durationSeconds = durationMillis / 1000.0;
+
+// Metrics
+                                double accuracy = SpeechMetricsUtils.calculateAccuracy(referenceText, transcript);
+                                double fluency = SpeechMetricsUtils.calculateFluency(transcript, durationSeconds);
+                                double pronunciation = SpeechMetricsUtils.calculatePronunciation(referenceText, transcript);
+
+// Update UI
+                                responseText.setText(transcript);
+                                accuracyText.setText(String.format(Locale.getDefault(), "Accuracy: %.2f%%", accuracy * 100));
+                                fluencyText.setText(String.format(Locale.getDefault(), "Fluency: %.2f WPS", fluency));
+                                pronunciationText.setText(String.format(Locale.getDefault(), "Pronunciation: %.2f%%", pronunciation * 100));
+
+                                accuracyText.setVisibility(View.VISIBLE);
+                                fluencyText.setVisibility(View.VISIBLE);
+                                pronunciationText.setVisibility(View.VISIBLE);
+
+// Save to Firestore
+                                saveSpeechTestResult(transcript, accuracy, fluency, pronunciation);
+
                                 Toast.makeText(SpeechTestActivity.this, "API Success: " + responseBody, Toast.LENGTH_LONG).show();
                                 // TODO: Parse responseBody as needed for your app
                             } catch (Exception e) {

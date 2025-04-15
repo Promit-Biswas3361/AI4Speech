@@ -16,7 +16,7 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 public class HuggingFaceApiClient {
     private static final String BASE_URL = "https://api-inference.huggingface.co/";
-    private static final String API_KEY = "hf_uhwXzSYUcAbkESNmELNeEVehjMNpQKVbU"; //e
+    private static final String API_KEY = "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"; //e
     
     private static HuggingFaceApiClient instance;
     private final com.example.ai4speech.HuggingFaceApiService apiService;
