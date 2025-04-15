@@ -157,6 +157,15 @@
             android:textSize="16sp"
             android:layout_marginStart="10dp"
             android:visibility="gone"/>
+        <ImageButton
+            android:id="@+id/speakerButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_speaker"
+            android:visibility="gone"
+            android:background="@null"
+            android:contentDescription="Play Sound"/>
+
     </LinearLayout>
 
 </RelativeLayout>
