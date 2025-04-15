@@ -138,12 +138,16 @@ public class MapActivity extends AppCompatActivity {
     private String getOSMUrl(double lat, double lon) {
         return "https://overpass-api.de/api/interpreter?data=[out:json];" +
                 "(" +
-                "node(around:8000," + lat + "," + lon + ")[\"healthcare\"=\"speech_therapy\"];" +  // Direct speech therapy clinics
-                "node(around:8000," + lat + "," + lon + ")[\"amenity\"=\"clinic\"][\"speciality\"~\"speech|therapy|language|communication\", i];" +  // Clinics with related specialities
-                "node(around:8000," + lat + "," + lon + ")[\"office\"=\"therapist\"][\"speciality\"~\"speech|therapy\", i];" +  // Therapist offices
-                ");" +
-                "out;";
+                "node(around:5000," + lat + "," + lon + ")[\"name\"~\"speech|therapy|therapist|communication|language\",i];" +
+                "node(around:5000," + lat + "," + lon + ")[\"description\"~\"speech|therapy|therapist|communication|language\",i];" +
+                "node(around:5000," + lat + "," + lon + ")[\"speciality\"~\"speech|therapy|language|communication\",i];" +
+                "node(around:5000," + lat + "," + lon + ")[\"healthcare:speciality\"~\"speech|therapy|language|communication\",i];" +
+                "node(around:5000," + lat + "," + lon + ")[\"healthcare\"~\"speech_therapy|therapy|clinic\",i];" +
+                "node(around:5000," + lat + "," + lon + ")[\"office\"=\"therapist\"];" +
+                "node(around:5000," + lat + "," + lon + ")[\"amenity\"=\"clinic\"];" +
+                ");out;";
     }
+
 
     // Async Task to Fetch OSM Data
     private class FetchOSMData extends AsyncTask<Void, Void, String> {
