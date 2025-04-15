@@ -1,4 +1,4 @@
-package com.example.ai4speech.api;
+package com.example.ai4speech;
 
 import okhttp3.MultipartBody;
 import okhttp3.RequestBody;

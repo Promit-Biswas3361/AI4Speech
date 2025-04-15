@@ -1,33 +1,20 @@
-package com.example.ai4speech.api;
+package com.example.ai4speech;
 
 import com.google.gson.annotations.SerializedName;
-
-public class PronunciationRequest {
-    @SerializedName("user_audio_path")
-    private String userAudioPath;
-    
-    @SerializedName("reference_audio_id")
-    private String referenceAudioId;
-
-    public PronunciationRequest(String userAudioPath, String referenceAudioId) {
-        this.userAudioPath = userAudioPath;
-        this.referenceAudioId = referenceAudioId;
-    }
-}
 
 public class PronunciationResponse {
     @SerializedName("mos")
     private double meanOpinionScore;
-    
+
     @SerializedName("accuracy")
     private double accuracyScore;
-    
+
     @SerializedName("fluency")
     private double fluencyScore;
-    
+
     @SerializedName("completeness")
     private double completenessScore;
-    
+
     @SerializedName("pronunciation")
     private double pronunciationScore;
 

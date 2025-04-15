@@ -1,6 +1,4 @@
-package com.example.ai4speech.api;
-
-import android.content.Context;
+package com.example.ai4speech;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -18,10 +16,10 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 public class HuggingFaceApiClient {
     private static final String BASE_URL = "https://api-inference.huggingface.co/";
-    private static final String API_KEY = "hf_YOUR_HUGGING_FACE_API_KEY"; // Replace with your actual API key
+    private static final String API_KEY = "hf_uhwXzSYUcAbkESNmELNeEVehjMNpQKVbU"; //e
     
     private static HuggingFaceApiClient instance;
-    private final HuggingFaceApiService apiService;
+    private final com.example.ai4speech.HuggingFaceApiService apiService;
 
     private HuggingFaceApiClient() {
         HttpLoggingInterceptor loggingInterceptor = new HttpLoggingInterceptor();

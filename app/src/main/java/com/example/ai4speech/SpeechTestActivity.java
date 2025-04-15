@@ -6,7 +6,6 @@ import android.content.pm.PackageManager;
 import android.media.MediaPlayer;
 import android.media.MediaRecorder;
 import android.os.Bundle;
-import android.os.Handler;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -15,14 +14,11 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
-import com.example.ai4speech.api.HuggingFaceApiClient;
-import com.example.ai4speech.api.PronunciationRequest;
-import com.example.ai4speech.api.PronunciationResponse;
+import com.example.ai4speech.HuggingFaceApiClient;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -133,20 +129,20 @@ public class SpeechTestActivity extends AppCompatActivity {
         // In a real app, you would load these from a local database or API
         speechSamples.add(new SpeechSample(
                 "sample_001",
-                "The quick brown fox jumps over the lazy dog.",
-                "https://huggingface.co/datasets/mispeech/speechocean762/resolve/main/audio/sample_001.wav"
+                "MARK IS GOING TO SEE ELEPHANT.",
+                "https://datasets-server.huggingface.co/cached-assets/mispeech/speechocean762/--/f95618ea1353303f34cf186b9c310fa2c1eb02c8/--/default/test/0/audio/audio.wav?Expires=1744734808&Signature=yPtOlSuEZ6qjPEdmzzn2RUZIqhlcADKCXW8P0pJcT3NKiJhAuEg9EA-oZ66LoT8TLcadzmtQUCKMU4JhOOKmC4IMomLA7kc0GPGiYaech8RqfmhX2zNeuRt-iTsGeU8mZ5LLuNvJQSTIqqv02cprfIEsVe7qBNV0xKH~PycGIpCr9PIh16JKPDYQwMLEg1LNgJMsYRQI4ThSeVlfROkv~kYwavEPfBR3VTi~b9RsAvwu55WtAPIyXVcuCEQWC5ovJwniFlxHPfWF95eX4KhGJ5-RYUofVkFcGGbSNedKAjyGCHTxEpY9vsqqd6msdkDAOrtRQgJj5DGvryQssL1nyw__&Key-Pair-Id=K3EI6M078Z3AC3"
         ));
         
         speechSamples.add(new SpeechSample(
                 "sample_002",
-                "How much wood would a woodchuck chuck if a woodchuck could chuck wood?",
-                "https://huggingface.co/datasets/mispeech/speechocean762/resolve/main/audio/sample_002.wav"
+                "KATE LOVES CHINA.",
+                "https://datasets-server.huggingface.co/cached-assets/mispeech/speechocean762/--/f95618ea1353303f34cf186b9c310fa2c1eb02c8/--/default/test/1/audio/audio.wav?Expires=1744734808&Signature=fDRFQo1KVUzibDXUwcdIRW6ihVKkel2P3SS8ikI1FWrZdcEtqJyaImc5B3QlvpMB1Hm3ZRfX5XP6HOYhavfpXsTqorv8Jy94xJP4qnZu6EmUV2XwUwhmco1J9rfSp0v4lkCkUGW5pPzEEzfKWPlymjn~wXi2GlfSjQCfNR~TZVD0UnllJxv10lHXea0KqdVY6WNtmN~0bkcoXiiq4FO5E3~kQYWzoVrJmDAxqWqtg92Jvf9lmeH-NP64rWTv3InptF~7~RkUSJRJY4iry5Py4mDpv~SYbi0UYR5NrUQicau-BQry4NOJpmPcWYMO4jSqgHViFjSpm30Kz7W7mnr4~Q__&Key-Pair-Id=K3EI6M078Z3AC3"
         ));
         
         speechSamples.add(new SpeechSample(
                 "sample_003",
-                "She sells seashells by the seashore.",
-                "https://huggingface.co/datasets/mispeech/speechocean762/resolve/main/audio/sample_003.wav"
+                "TWO SIX FOUR EIGHT.",
+                "https://datasets-server.huggingface.co/cached-assets/mispeech/speechocean762/--/f95618ea1353303f34cf186b9c310fa2c1eb02c8/--/default/test/2/audio/audio.wav?Expires=1744734808&Signature=qmJRWX7TSHD3wNNP39nZHByL46rZivUEYB-NM7gBWPGlbOpNKibe7DeL4Mpt-4f18dlfRWYDZRFtZk3jIwT~B4~7byU0i2p3zYzmuCmHmyHrOUQwXmBRvEk5-XXfFULMx9C~6lqE~L3oSSwOx7XeVy6MOyFOkOfHxjostk3S1hR40zD2r6M3isk7XhpdOqRm0-1cmjt9kVbY3jD2VP0bU9e~lVFJP9hJ2A9rrKgPYGFfJXpzY5CgNFW5FJJ4vFoQzI-2zkSu-dSXKEzNmXdJomK1vhP0U0Oz5DQyJQtsDE0iQpU13TN1kTrbA6Zmy8zZwQtkSkx1jMXatC8hAxgv3w__&Key-Pair-Id=K3EI6M078Z3AC3"
         ));
     }
     
@@ -266,13 +262,13 @@ public class SpeechTestActivity extends AppCompatActivity {
         // Create multipart request
         MultipartBody.Part audioPart = HuggingFaceApiClient.getInstance().prepareAudioFilePart(audioFile);
         RequestBody referenceAudioUrl = RequestBody.create(
-                MediaType.parse("text/plain"), 
+                MediaType.parse("text/plain"),
                 currentSample.getAudioUrl()
         );
-        
+
         // API endpoint URL
-        String evaluationUrl = "https://api-inference.huggingface.co/models/speechbrain/speech-recognition-wav2vec2-librispeech-asr";
-        
+        String evaluationUrl = "https://api-inference.huggingface.co/models/openai/whisper-small";
+
         // Make API call
         HuggingFaceApiClient.getInstance().getApiService()
                 .uploadAudioFile(
@@ -285,24 +281,34 @@ public class SpeechTestActivity extends AppCompatActivity {
                     @Override
                     public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
                         loadingIcon.setVisibility(View.GONE);
-                        
-                        if (response.isSuccessful()) {
+
+                        if (response.isSuccessful() && response.body() != null) {
                             try {
-                                // For now, we'll simulate the response as the actual API integration
-                                // would depend on a specific Hugging Face pronunciation evaluation model
-                                simulatePronunciationEvaluation();
+                                String responseBody = response.body().string();
+                                // Log or display the actual API response
+                                Log.d(TAG, "API response: " + responseBody);
+                                Toast.makeText(SpeechTestActivity.this, "API Success: " + responseBody, Toast.LENGTH_LONG).show();
+                                // TODO: Parse responseBody as needed for your app
                             } catch (Exception e) {
                                 Log.e(TAG, "Error processing response", e);
-                                Toast.makeText(SpeechTestActivity.this, 
-                                        "Error processing response: " + e.getMessage(), 
+                                Toast.makeText(SpeechTestActivity.this,
+                                        "Error processing response: " + e.getMessage(),
                                         Toast.LENGTH_SHORT).show();
                             }
-                        } else {
-                            Log.e(TAG, "API call failed: " + response.code());
-                            Toast.makeText(SpeechTestActivity.this, 
-                                    "API call failed: " + response.code(), 
-                                    Toast.LENGTH_SHORT).show();
                         }
+
+                        if (!response.isSuccessful()) {
+                            String errorMessage = "API call failed: " + response.code();
+                            if (response.errorBody() != null) {
+                                try {
+                                    errorMessage += " - " + response.errorBody().string();
+                                } catch (IOException ignored) {}
+                            }
+                            Log.e(TAG, errorMessage);
+                            Toast.makeText(SpeechTestActivity.this, errorMessage, Toast.LENGTH_SHORT).show();
+                            return;
+                        }
+
                     }
 
                     @Override
@@ -314,33 +320,6 @@ public class SpeechTestActivity extends AppCompatActivity {
                                 Toast.LENGTH_SHORT).show();
                     }
                 });
-    }
-    
-    // This simulates the response from the Hugging Face API
-    // In a real implementation, you would parse the actual response
-    private void simulatePronunciationEvaluation() {
-        // Simulate scores between 0.7 and 1.0 for a more realistic range
-        double accuracy = 0.7 + (Math.random() * 0.3);
-        double fluency = 0.7 + (Math.random() * 0.3);
-        double pronunciation = 0.7 + (Math.random() * 0.3);
-        
-        // Calculate percentage scores
-        int accuracyPercent = (int) (accuracy * 100);
-        int fluencyPercent = (int) (fluency * 100);
-        int pronunciationPercent = (int) (pronunciation * 100);
-        
-        // Update UI
-        accuracyText.setText("Accuracy: " + accuracyPercent + "%");
-        accuracyText.setVisibility(View.VISIBLE);
-        
-        fluencyText.setText("Fluency: " + fluencyPercent + "%");
-        fluencyText.setVisibility(View.VISIBLE);
-        
-        pronunciationText.setText("Pronunciation: " + pronunciationPercent + "%");
-        pronunciationText.setVisibility(View.VISIBLE);
-        
-        // Save results to Firebase
-        saveSpeechTestResult(generatedText.getText().toString(), accuracy, fluency, pronunciation);
     }
 
     private void saveSpeechTestResult(String text, double accuracy, double fluency, double pronunciation) {
