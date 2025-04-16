@@ -63,10 +63,8 @@ public class ProfileActivity extends AppCompatActivity {
         editProfilePicButton.setOnClickListener(v -> openFileChooser());
 
         // Navigate to EditProfileActivity when Edit Profile button is clicked
-        editProfileButton.setOnClickListener(v -> {
-            Intent intent = new Intent(ProfileActivity.this, EditProfileActivity.class);
-            startActivity(intent);
-        });
+        editProfileButton.setOnClickListener(v -> showEditUsernameDialog());
+
 
         profileButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -231,4 +229,43 @@ public class ProfileActivity extends AppCompatActivity {
         // Save to local storage or database
         // You can use SharedPreferences or Firebase Storage
     }
+
+    private void showEditUsernameDialog() {
+        android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(this);
+        builder.setTitle("Edit Username");
+
+        final android.widget.EditText input = new android.widget.EditText(this);
+        input.setHint("Enter new username");
+        input.setText(userName.getText().toString());
+        builder.setView(input);
+
+        builder.setPositiveButton("Save", (dialog, which) -> {
+            String newUsername = input.getText().toString().trim();
+            if (!newUsername.isEmpty()) {
+                updateUsernameInFirestore(newUsername);
+            } else {
+                Toast.makeText(this, "Username cannot be empty", Toast.LENGTH_SHORT).show();
+            }
+        });
+
+        builder.setNegativeButton("Cancel", (dialog, which) -> dialog.cancel());
+
+        builder.show();
+    }
+
+    private void updateUsernameInFirestore(String newUsername) {
+        String userId = FirebaseAuth.getInstance().getCurrentUser().getUid();
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+
+        DocumentReference userRef = db.collection("users").document(userId);
+        userRef.update("name", newUsername)
+                .addOnSuccessListener(aVoid -> {
+                    userName.setText(newUsername);
+                    Toast.makeText(ProfileActivity.this, "Username updated successfully", Toast.LENGTH_SHORT).show();
+                })
+                .addOnFailureListener(e -> {
+                    Toast.makeText(ProfileActivity.this, "Failed to update username", Toast.LENGTH_SHORT).show();
+                });
+    }
+
 }

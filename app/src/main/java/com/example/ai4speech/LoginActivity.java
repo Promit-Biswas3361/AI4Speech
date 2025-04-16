@@ -5,7 +5,10 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
+
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.firebase.auth.FirebaseAuth;
@@ -16,6 +19,8 @@ public class LoginActivity extends AppCompatActivity {
 
     private EditText emailInput, passwordInput;
     private Button loginButton, goToSignupButton;
+
+    private TextView forgotPassword;
 
     private FirebaseAuth mAuth;
     private FirebaseFirestore db;
@@ -29,10 +34,14 @@ public class LoginActivity extends AppCompatActivity {
         passwordInput = findViewById(R.id.passwordInput);
         loginButton = findViewById(R.id.loginButton);
         goToSignupButton = findViewById(R.id.goToSignupButton);
+        forgotPassword = findViewById(R.id.forgotPassword);
 
         // Initialize Firebase Auth and Firestore
         mAuth = FirebaseAuth.getInstance();
         db = FirebaseFirestore.getInstance();
+
+        //forgot password button click
+        forgotPassword.setOnClickListener(v -> showResetPasswordDialog());
 
         // Login button click
         loginButton.setOnClickListener(v -> {
@@ -72,4 +81,34 @@ public class LoginActivity extends AppCompatActivity {
         // Go to Signup Page
         goToSignupButton.setOnClickListener(v -> startActivity(new Intent(LoginActivity.this, SignupActivity.class)));
     }
+
+    private void showResetPasswordDialog() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("Reset Password");
+
+        final EditText input = new EditText(this);
+        input.setHint("Enter your email");
+        builder.setView(input);
+
+        builder.setPositiveButton("Send Reset Link", (dialog, which) -> {
+            String email = input.getText().toString().trim();
+            if (email.isEmpty()) {
+                Toast.makeText(this, "Email cannot be empty", Toast.LENGTH_SHORT).show();
+                return;
+            }
+
+            FirebaseAuth.getInstance().sendPasswordResetEmail(email)
+                    .addOnCompleteListener(task -> {
+                        if (task.isSuccessful()) {
+                            Toast.makeText(this, "Reset email sent!", Toast.LENGTH_LONG).show();
+                        } else {
+                            Toast.makeText(this, "Error: " + task.getException().getMessage(), Toast.LENGTH_LONG).show();
+                        }
+                    });
+        });
+
+        builder.setNegativeButton("Cancel", (dialog, which) -> dialog.dismiss());
+        builder.show();
+    }
+
 }

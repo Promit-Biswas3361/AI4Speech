@@ -54,4 +54,15 @@
         android:text="New User? Create Account"
         android:textColor="@android:color/white"
         android:textSize="16sp" />
+
+    <TextView
+        android:id="@+id/forgotPassword"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Forgot Password?"
+        android:textColor="@android:color/white"
+        android:textSize="14sp"
+        android:textStyle="bold"
+        android:layout_gravity="center"
+        android:paddingTop="10dp" />
 </LinearLayout>

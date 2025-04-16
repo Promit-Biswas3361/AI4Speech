@@ -11,6 +11,8 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.media.MediaPlayer;
+
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -35,11 +37,31 @@ public class GameActivity extends AppCompatActivity {
     private Button submitButton, nextButton;
     private ImageButton logoutButton, profileButton;
     private List<GameObject> objectList;
+    private ImageButton speakerButton;
+    private MediaPlayer mediaPlayer;
+
     private HashSet<Integer> usedObjects = new HashSet<>();
     private String currentWord = "";
     private StringBuilder userInput = new StringBuilder();
     private int currentLevel = 1;
     private final int TOTAL_LEVELS = 15;
+
+    private void playWordAudio(String word) {
+        // Ensure previous audio is released
+        if (mediaPlayer != null) {
+            mediaPlayer.release();
+            mediaPlayer = null;
+        }
+
+        int resId = getResources().getIdentifier(word.toLowerCase(), "raw", getPackageName());
+        if (resId != 0) {
+            mediaPlayer = MediaPlayer.create(this, resId);
+            mediaPlayer.start();
+        } else {
+            Toast.makeText(this, "Audio not found for " + word, Toast.LENGTH_SHORT).show();
+        }
+    }
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -55,6 +77,9 @@ public class GameActivity extends AppCompatActivity {
         nextButton = findViewById(R.id.nextButton);
         logoutButton = findViewById(R.id.logoutButton);
         profileButton = findViewById(R.id.profileButton);
+        speakerButton = findViewById(R.id.speakerButton);
+        speakerButton.setOnClickListener(v -> playWordAudio(currentWord));
+
 
         // Handle logout button click
         logoutButton.setOnClickListener(v -> {
@@ -129,6 +154,7 @@ public class GameActivity extends AppCompatActivity {
         submitButton.setVisibility(View.GONE);
         feedbackIcon.setVisibility(View.GONE);
         nextButton.setVisibility(View.GONE);
+        speakerButton.setVisibility(View.GONE);
     }
 
     // Get a random object ensuring no repetition
@@ -231,13 +257,19 @@ public class GameActivity extends AppCompatActivity {
             feedbackIcon.setVisibility(View.VISIBLE);
             nextButton.setVisibility(View.VISIBLE);
             submitButton.setVisibility(View.GONE);
-            saveGameProgress(true); // Save correct attempt
+
+            // Show speaker button and allow playback
+            speakerButton.setVisibility(View.VISIBLE);
+
+            saveGameProgress(true);
         } else {
             feedbackIcon.setImageResource(R.drawable.remove); // Incorrect Answer
             feedbackIcon.setVisibility(View.VISIBLE);
             Toast.makeText(this, "Incorrect! Try again.", Toast.LENGTH_SHORT).show();
-            saveGameProgress(false); // Save incorrect attempt
+            speakerButton.setVisibility(View.GONE); // hide if wrong
+            saveGameProgress(false);
         }
+
     }
 
     public void onNext() {
