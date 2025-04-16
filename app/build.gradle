@@ -2,6 +2,7 @@ plugins {
     id 'com.android.application'
     id 'com.google.gms.google-services'
 }
+def huggingfaceApiKey = project.hasProperty("HUGGINGFACE_API_KEY") ? project.property("HUGGINGFACE_API_KEY") : ""
 
 android {
     namespace 'com.example.ai4speech'
@@ -13,7 +14,7 @@ android {
         targetSdk 34
         versionCode 1
         versionName "1.0"
-
+        buildConfigField "String", "HUGGINGFACE_API_KEY", "\"${huggingfaceApiKey}\""
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
 
@@ -30,7 +31,7 @@ android {
 }
 
 dependencies {
-
+    implementation 'com.arthenica:ffmpeg-kit-full:6.0'
     implementation 'androidx.appcompat:appcompat:1.7.0'
     implementation 'com.google.android.material:material:1.12.0'
     implementation 'androidx.constraintlayout:constraintlayout:2.2.0'
@@ -42,6 +43,12 @@ dependencies {
     implementation 'com.google.firebase:firebase-auth'
     implementation 'com.google.firebase:firebase-storage'
     implementation 'com.google.firebase:firebase-database'
-}
+    implementation 'com.squareup.retrofit2:retrofit:2.9.0'
+    implementation 'com.squareup.retrofit2:converter-gson:2.9.0'
+    implementation 'com.squareup.okhttp3:okhttp:4.9.1'
+    implementation 'com.squareup.okhttp3:logging-interceptor:4.9.1'
+    implementation 'org.apache.commons:commons-text:1.10.0'
 
+}
+android.buildFeatures.buildConfig true
 apply plugin: 'com.google.gms.google-services'
