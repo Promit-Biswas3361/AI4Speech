@@ -2,6 +2,7 @@ plugins {
     id 'com.android.application'
     id 'com.google.gms.google-services'
 }
+def huggingfaceApiKey = project.hasProperty("HUGGINGFACE_API_KEY") ? project.property("HUGGINGFACE_API_KEY") : ""
 
 android {
     namespace 'com.example.ai4speech'
@@ -13,7 +14,7 @@ android {
         targetSdk 34
         versionCode 1
         versionName "1.0"
-
+        buildConfigField "String", "HUGGINGFACE_API_KEY", "\"${huggingfaceApiKey}\""
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
 
@@ -49,5 +50,5 @@ dependencies {
     implementation 'org.apache.commons:commons-text:1.10.0'
 
 }
-
+android.buildFeatures.buildConfig true
 apply plugin: 'com.google.gms.google-services'
