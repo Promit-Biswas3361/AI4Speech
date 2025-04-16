@@ -161,8 +161,26 @@ public class SpeechTestActivity extends AppCompatActivity {
         
         speechSamples.add(new SpeechSample(
                 "sample_003",
-                "TWO SIX FOUR EIGHT.",
-                "https://datasets-server.huggingface.co/cached-assets/mispeech/speechocean762/--/f95618ea1353303f34cf186b9c310fa2c1eb02c8/--/default/test/2/audio/audio.wav?Expires=1744734808&Signature=qmJRWX7TSHD3wNNP39nZHByL46rZivUEYB-NM7gBWPGlbOpNKibe7DeL4Mpt-4f18dlfRWYDZRFtZk3jIwT~B4~7byU0i2p3zYzmuCmHmyHrOUQwXmBRvEk5-XXfFULMx9C~6lqE~L3oSSwOx7XeVy6MOyFOkOfHxjostk3S1hR40zD2r6M3isk7XhpdOqRm0-1cmjt9kVbY3jD2VP0bU9e~lVFJP9hJ2A9rrKgPYGFfJXpzY5CgNFW5FJJ4vFoQzI-2zkSu-dSXKEzNmXdJomK1vhP0U0Oz5DQyJQtsDE0iQpU13TN1kTrbA6Zmy8zZwQtkSkx1jMXatC8hAxgv3w__&Key-Pair-Id=K3EI6M078Z3AC3"
+                "WE CALL IT BEAR",
+                "https://datasets-server.huggingface.co/assets/mispeech/speechocean762/--/f95618ea1353303f34cf186b9c310fa2c1eb02c8/--/default/train/0/audio/audio.wav?Expires=1744785263&Signature=lbL2s5l9yj7mFPLcFmDpPps17fFYsimU9Y~erkBEBxcK-Gwu3BBla3kk1ileafnQKK1pDeBeg9whSC2q3ykLKWpPSa5O7MqQNxLvx9YAcc6uoXsRijMXDmYPfwFafB0pqIyqcrFxQog0uc0gOubZjlOUL6phS49PeRU0m3lqR8QHzPC1O3TUHbWNM3B2CLTXfYy0qsgYhcH-Ki7iCbRUser-Ka4EEYeLDemt2hWQEzsmY9sZkllzWOAKfqSrgWyLj3c-0NB1bZMXQIv7NTbaARz7QG5qnkd1d7injjxWbr~Kpnx~0gfrOaFuQMvZ2BLMt~4n8T-FGte08ndh2JyqPg__&Key-Pair-Id=K3EI6M078Z3AC3"
+        ));
+
+        speechSamples.add(new SpeechSample(
+                "sample_004",
+                "MANDY HAS A BIG ARM",
+                "https://datasets-server.huggingface.co/assets/mispeech/speechocean762/--/f95618ea1353303f34cf186b9c310fa2c1eb02c8/--/default/train/6/audio/audio.wav?Expires=1744785263&Signature=s0qJyJTQiWPjycGLEL4x~gYM4uIcfrd1oe6yf2MclJuHnRhLGMR~pZCsWcpVHesQIg6YZj1g~wW~0-UNE65tMvapZWw6q5zwdNhOVB482ASkGAmEQJ37c0omoWQNmyl~U64UnNcTJA4qiM1yf9dDlxEGKEOdY1v8gFgr-5GjpCPlxtiHiy~A94c2ZnHH9~qHi8OKXrXza8IiuUjCEww6uak1UMFnadozH3d4OKJwFOT0-5boZvSTl~TobADrT6gSOp5nWCUElGu189q2zBqlI4HoP5ZF2UUvNbjkepycjSqbPHj5y6KPaphUz0VJlddJAc25Y3YFmKlRODJcXjEePA__&Key-Pair-Id=K3EI6M078Z3AC3"
+        ));
+
+        speechSamples.add(new SpeechSample(
+                "sample_005",
+                "THEN HE WENT TO THEME PARK",
+                "https://datasets-server.huggingface.co/assets/mispeech/speechocean762/--/f95618ea1353303f34cf186b9c310fa2c1eb02c8/--/default/train/9/audio/audio.wav?Expires=1744785263&Signature=gr7C-rR18BF6QWGrtV1UcJ4RDZjZpBnwmnNNpyyyGgtAwqCXatP4taxjMFhBC~ex4cUqIM~MVtC2-DSwYgB00G0abLuxdjXN5uoXpOVJ1OuDCcMLAtFccQgJv6nyH3STCj1-1R8atplBEpROjq7K6mcrWT6oS2HOfLsgzkQgzW28~p0B2575BOPwyd1yh~W3yYTOcaXYCkBlX4J5v4w2nwKVdn-r-HEzar3y7Je6~aDOGpYSNZc~G44~mZrezyyFLxcKyKnYkP~ILcmCX5ISB9s~ycKfKU~e3R13jw1YbEcbGn4tnsysmfvH4T9yV9NDKuC3MFjAtc0~XcF4as7bKQ__&Key-Pair-Id=K3EI6M078Z3AC3"
+        ));
+
+        speechSamples.add(new SpeechSample(
+                "sample_006",
+                "BOB LIVES IN CAIRO NOW",
+                "https://datasets-server.huggingface.co/assets/mispeech/speechocean762/--/f95618ea1353303f34cf186b9c310fa2c1eb02c8/--/default/train/17/audio/audio.wav?Expires=1744785263&Signature=TDIx315g0eopLdMOIiszbAVXQg4dvfQ9Apaui8VGxkFeTSv6XynSlC0wASRgiN3-WvGGQrZjfZARMPE1bsyYOV-5PHLhUenBex5LhXC6UnMUUpVfoWeik6JgAY2omKUs1DVzdxIKp0hAGWe3FE9xHiGS0BIG3dlKLg7s0WWxayEM-bFhqgXViy5SLT1SE9GkCqqcBeUCch1L9VxZkpENxsHiUrk32NWRgYLipleuWzWKoSpH~QhCuWL7xvLyfRpDDEAZPivgftFip0G1LO7JOzSVTGwzdcNLNSzy2Wlw5EwyoyM2vNJVGeRssQDV-gQpmOa0O0I1zzSMHPfywUCvnQ__&Key-Pair-Id=K3EI6M078Z3AC3"
         ));
     }
     
@@ -386,9 +404,9 @@ public class SpeechTestActivity extends AppCompatActivity {
         String testId = "test_" + System.currentTimeMillis();
         Map<String, Object> testResult = new HashMap<>();
         testResult.put("text", text);
-        testResult.put("accuracy", accuracy);
+        testResult.put("accuracy", accuracy*100);
         testResult.put("fluency", fluency);
-        testResult.put("pronunciation", pronunciation);
+        testResult.put("pronunciation", pronunciation*100);
         testResult.put("timestamp", System.currentTimeMillis());
         testResult.put("formattedDate", getCurrentDate());
         testResult.put("sampleId", currentSample.getId());
